@@ -1,10 +1,15 @@
 import express from "express";
 import cors from "cors";
 import {ask} from "./ask.js";
+import registerRoute from "./auth/register.js";
+import loginRoute from "./auth/login.js";
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+app.use("/auth", registerRoute);
+app.use("/auth", loginRoute);
 
 // api endpoint for answer
 app.post("/ask", async (req, res) => {
