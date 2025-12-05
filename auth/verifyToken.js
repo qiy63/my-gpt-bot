@@ -9,19 +9,33 @@ export default function verifyToken(req, res, next) {
         const token = authHeader.startsWith("Bearer ")
             ? authHeader.split(" ")[1]
             : null;
+        
+        if (!token) {
+            
+            return res.status(401).json({error: "No token provided"});
 
-        if (!token) return res.status(401).json({error: "No token provided"});
+        }
 
         jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
 
-            if (err) return res.status(401).json({error: "Invalid token"});
+            if (err) {
+                
+                return res.status(401).json({error: "Invalid token"});
+            
+            }
 
-            req.user = decoded;
+            req.user = {
+
+                id: decoded.id,
+                email: decoded.email,
+
+            }
+
             next();
 
         });
 
-    } catch {
+    } catch (err) {
 
         console.error("verifyToken error: ", err);
         res.status(500).json({error: "Server Error"});
